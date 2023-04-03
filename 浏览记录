@@ -1,0 +1,31 @@
+import os
+import sqlite3
+import operator
+from datetime import datetime
+try:
+    os.system("taskkill /f /im chrome.exe")
+except:
+    print("chrome已经关闭")
+# 定义数据库文件路径
+data_path = os.path.expanduser('~') + r"\AppData\Local\Google\Chrome\User Data\Profile 1"
+files = os.listdir(data_path)
+
+history_db = os.path.join(data_path, 'history')
+
+# 连接数据库
+c = sqlite3.connect(history_db)
+cursor = c.cursor()
+
+# 查询最近100条浏览记录
+select_statement = "SELECT urls.url, urls.title, visits.visit_time FROM urls, visits WHERE urls.id = visits.url ORDER BY visits.visit_time DESC LIMIT 100"
+cursor.execute(select_statement)
+
+results = cursor.fetchall()
+
+# 解析并输出浏览记录
+for row in results:
+    url = row[0]
+    title = row[1]
+    timestamp = row[2] / 1000000
+    date_time = datetime.fromtimestamp(timestamp)
+    print(f"{date_time} - {title} - {url}")
