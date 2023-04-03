@@ -1,0 +1,18 @@
+import psutil
+import os
+
+
+def printPids():
+    pids = psutil.pids()
+    for pid in pids:
+        p = psutil.Process(pid) #某个进程的详细内容
+        print('pid=%s,pname=%s' % (pid, p.name()))
+         # 关闭excel进程
+        if p.name() == 'EXCEL.EXE':
+            cmd = 'taskkill /F /IM EXCEL.EXE'
+            os.system(cmd)
+
+
+
+if __name__ == '__main__':
+    printPids()
